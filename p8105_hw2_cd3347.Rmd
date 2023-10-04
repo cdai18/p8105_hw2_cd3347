@@ -2,13 +2,62 @@
 title: "HW2"
 author: "Christina Dai"
 output: github_document
-editor_options: 
-  chunk_output_type: console
 ---
 
 ```{r setup}
 library(tidyverse)
+library(readxl)
 ```
+
+### Problem 1
+
+
+### Problem 2
+
+Read and clean the Mr. Trash Wheel sheet:
+
+```{r}
+mr_trash_tidy = 
+  read_excel("./data/202309 Trash Wheel Collection Data.xlsx", sheet = 1,
+             range = "A2:N586") %>% 
+  janitor::clean_names() %>% 
+  mutate(homes_powered = (weight_tons * 500) / 30) %>% 
+  mutate(year = as.numeric(year)) %>% 
+  mutate(wheel_name = "mr_trash") %>% 
+  relocate(wheel_name)
+```
+
+Do the same for the Professor Trash Wheel and Gwynnda datasets:
+
+```{r}
+prof_trash_tidy = 
+  read_excel("./data/202309 Trash Wheel Collection Data.xlsx", sheet = 2,
+             range = "A2:M108") %>% 
+  janitor::clean_names() %>% 
+  mutate(homes_powered = (weight_tons * 500) / 30) %>% 
+  mutate(wheel_name = "prof_trash") %>% 
+  relocate(wheel_name)
+```
+
+```{r}
+gwynnda_tidy = 
+  read_excel("./data/202309 Trash Wheel Collection Data.xlsx", sheet = 4,
+             range = "A2:L157") %>% 
+  janitor::clean_names() %>% 
+  mutate(homes_powered = (weight_tons * 500) / 30) %>% 
+  mutate(wheel_name = "gwynnda") %>% 
+  relocate(wheel_name)
+```
+
+Combine all three datasets:
+
+```{r}
+trash_wheels_tidy = 
+  bind_rows(mr_trash_tidy, prof_trash_tidy, gwynnda_tidy)
+```
+
+
+
 
 
 
