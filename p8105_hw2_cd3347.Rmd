@@ -1,6 +1,6 @@
 ---
 title: "HW2"
-author: "Christina Dai"
+author: "Christina Dai cd3347"
 output: github_document
 ---
 
@@ -78,7 +78,7 @@ develop_mci = filter(mci_baseline_tidy, age_at_onset != '.')
 carriers = filter(mci_baseline_tidy, apoe4 == "carrier")
 ```
 
-The first step in this process is to read in the data using `read.csv`, skipping the first row because it does not contain any data. Then, after cleaning the names using `janitor::clean_names()`, we use `mutate()` to recode the `sex` variable and `apoe4` variable to be more specific. Lastly, using `filter`, we only include observations where `age_at_onset` is either greater than `current_age` or the null value of "." to ensure that inclusion criteria is met. 483 participants were recruited for this study, with `r nrow(mci_baseline_tidy)` meeting inclusion criteria. `r nrow(develop_mci)` participants developed MCI during the study. The average baseline age is `r mean(mci_baseline_tidy$current_age)`, while `r (nrow(carriers)/479) * 100` is the proportion of women in the study that are APOE4 carriers.
+The first step in this process is to read in the data using `read_csv`, skipping the first row because it does not contain any data. Then, after cleaning the names using `janitor::clean_names()`, we use `mutate()` to recode the `sex` variable and `apoe4` variable to be more specific. Lastly, using `filter`, we only include observations where `age_at_onset` is either greater than `current_age` or the null value of "." to ensure that inclusion criteria is met. 483 participants were recruited for this study, with `r nrow(mci_baseline_tidy)` meeting inclusion criteria. `r nrow(develop_mci)` participants developed MCI during the study. The average baseline age is `r mean(mci_baseline_tidy$current_age)`, while `r (nrow(carriers)/479) * 100` is the proportion of women in the study that are APOE4 carriers.
 
 
 Now, do the same for the MCI amyloid dataset:
@@ -90,11 +90,28 @@ mci_amyloid_tidy =
   pivot_longer(
     baseline:time_8,
     names_to = "record_time",
+    names_prefix = "time_",
     values_to = "amyloid"
-  )
+  ) %>% 
+  rename("id" = study_id)
 ```
 
+The first step here is the same as before: read the data using `read_csv`. Then use `janitor::clean_names()` to standardize the variable names. After that, we need to tidy our recording times by using `pivot_longer`, which will combine all the recording times into one variable, `record_time`, and amyloid values into `amyloid`. Now, each observation corresponds to the amyloid value at each time of recording, including baseline.
 
+Now, check to see if some participants appear only in either dataset:
+
+```{r}
+anti_join(mci_baseline_tidy, mci_amyloid_tidy, by = "id")
+```
+
+There are 8 participants who don't exist in both datasets: IDs 14, 49, 92, 179, 268, 304, 389, and 412. These participants only exist in the baseline dataset, and were likely lost to follow-up.
+
+Now, combine datasets together with only particpants that exist in both datasets:
+
+```{r}
+mci_combined = 
+  inner_join(mci_baseline_tidy, mci_amyloid_tidy, by = "id")
+```
 
 
 
