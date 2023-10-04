@@ -75,9 +75,25 @@ mci_baseline_tidy =
   filter(age_at_onset > current_age | age_at_onset == '.')
 
 develop_mci = filter(mci_baseline_tidy, age_at_onset != '.')
+carriers = filter(mci_baseline_tidy, apoe4 == "carrier")
 ```
 
-The first step in this process is to read in the data using `read.csv`, skipping the first row because it does not contain any data. Then, after cleaning the names using `janitor::clean_names()`, we use `mutate()` to recode the `sex` variable and `apoe4` variable to be more specific. Lastly, using `filter`, we only include observations where `age_at_onset` is either greater than `current_age` or the null value of "." to ensure that inclusion criteria is met. 483 participants were recruited for this study, with `r nrow(mci_baseline_tidy)` meeting inclusion criteria. `r nrow(develop_mci)` participants developed MCI during the study.
+The first step in this process is to read in the data using `read.csv`, skipping the first row because it does not contain any data. Then, after cleaning the names using `janitor::clean_names()`, we use `mutate()` to recode the `sex` variable and `apoe4` variable to be more specific. Lastly, using `filter`, we only include observations where `age_at_onset` is either greater than `current_age` or the null value of "." to ensure that inclusion criteria is met. 483 participants were recruited for this study, with `r nrow(mci_baseline_tidy)` meeting inclusion criteria. `r nrow(develop_mci)` participants developed MCI during the study. The average baseline age is `r mean(mci_baseline_tidy$current_age)`, while `r (nrow(carriers)/479) * 100` is the proportion of women in the study that are APOE4 carriers.
+
+
+Now, do the same for the MCI amyloid dataset:
+
+```{r}
+mci_amyloid_tidy = 
+  read_csv("./data/mci_amyloid.csv", skip = 1) %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    baseline:time_8,
+    names_to = "record_time",
+    values_to = "amyloid"
+  )
+```
+
 
 
 
