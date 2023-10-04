@@ -56,7 +56,7 @@ trash_wheels_tidy =
   bind_rows(mr_trash_tidy, prof_trash_tidy, gwynnda_tidy)
 ```
 
-
+In the combined dataset, which includes data from Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda Trash wheel, there are `r nrow(trash_wheels_tidy)` rows.
 
 
 
