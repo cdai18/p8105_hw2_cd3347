@@ -11,6 +11,36 @@ library(readxl)
 
 ### Problem 1
 
+Clean the data in pols-month.csv:
+
+```{r}
+pols_clean = 
+  read_csv("./data/pols-month.csv") %>% 
+  separate(mon, into = c('year', 'month', 'day'), sep = '-') %>% 
+  mutate(month = recode(month, `01` = "January", `02` = "February", `03` = "March", `04` = "April", `05` = "May", `06` = "June", `07` = "July", `08` = "August", `09` = "September", `10` = "October", `11` = "November", `12` = "December")) %>% 
+  mutate(president = recode(prez_gop, `0` = "dem", `1` = "gop")) %>% 
+  select(everything(), -day, -prez_gop, -prez_dem)
+```
+
+Do the same for snp.csv:
+
+```{r}
+snp_clean = 
+  read_csv("./data/snp.csv") %>% 
+  separate(date, into = c('month', 'day', 'year'), sep = '/') %>%
+  mutate(month = as.numeric(month)) %>% 
+  arrange(year, month) %>% 
+  mutate(month = recode(month, `1` = "January", `2` = "February", `3` = "March", `4` = "April", `5` = "May", `6` = "June", `7` = "July", `8` = "August", `9` = "September", `10` = "October", `11` = "November", `12` = "December")) %>% 
+  relocate(year, month)
+```
+
+Clean/tidy unemployment.csv
+
+```{r}
+unemployment_clean = 
+  read_csv("./data/unemployment.csv")
+```
+
 
 ### Problem 2
 
