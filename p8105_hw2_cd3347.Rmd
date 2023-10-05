@@ -11,14 +11,16 @@ library(readxl)
 
 ### Problem 1
 
+Didn't figure it out :(
+
 Clean the data in pols-month.csv:
 
 ```{r}
 pols_clean = 
   read_csv("./data/pols-month.csv") %>% 
   separate(mon, into = c('year', 'month', 'day'), sep = '-') %>% 
-  mutate(month = recode(month, `01` = "January", `02` = "February", `03` = "March", `04` = "April", `05` = "May", `06` = "June", `07` = "July", `08` = "August", `09` = "September", `10` = "October", `11` = "November", `12` = "December")) %>% 
-  mutate(president = recode(prez_gop, `0` = "dem", `1` = "gop")) %>% 
+  mutate(month = recode(month, `01` = "jan", `02` = "feb", `03` = "mar", `04` = "apr", `05` = "may", `06` = "jun", `07` = "jul", `08` = "aug", `09` = "sep", `10` = "oct", `11` = "nov", `12` = "dec")) %>% 
+  mutate(president = recode(prez_gop, `0` = "dem", `1` = "gop", `2` = "gop")) %>% 
   select(everything(), -day, -prez_gop, -prez_dem)
 ```
 
@@ -30,7 +32,7 @@ snp_clean =
   separate(date, into = c('month', 'day', 'year'), sep = '/') %>%
   mutate(month = as.numeric(month)) %>% 
   arrange(year, month) %>% 
-  mutate(month = recode(month, `1` = "January", `2` = "February", `3` = "March", `4` = "April", `5` = "May", `6` = "June", `7` = "July", `8` = "August", `9` = "September", `10` = "October", `11` = "November", `12` = "December")) %>% 
+  mutate(month = recode(month, `1` = "jan", `2` = "feb", `3` = "mar", `4` = "apr", `5` = "may", `6` = "jun", `7` = "jul", `8` = "aug", `9` = "sep", `10` = "oct", `11` = "nov", `12` = "dec")) %>% 
   relocate(year, month)
 ```
 
@@ -38,7 +40,21 @@ Clean/tidy unemployment.csv
 
 ```{r}
 unemployment_clean = 
-  read_csv("./data/unemployment.csv")
+  read_csv("./data/unemployment.csv") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "unemployment_rate"
+  ) %>% 
+  mutate(year = as.character(year))
+```
+
+Merging snp into pols:
+
+```{r}
+snp_pols_merge = 
+  left_join(pols_clean, snp_clean)
 ```
 
 
